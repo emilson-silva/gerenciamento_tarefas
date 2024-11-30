@@ -1,69 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gerenciamento_tarefas/features/task/data/models/task_model.dart';
+import 'package:gerenciamento_tarefas/features/task/data/repositories/task_repository_impl.dart';
+import 'package:gerenciamento_tarefas/features/task/presentation/cubit/task_cubit.dart';
+import 'package:gerenciamento_tarefas/features/task/presentation/pages/task_list_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializa o Hive e registra o adaptador
+  await Hive.initFlutter();
+  Hive.registerAdapter(TaskModelAdapter());
+  final taskBox = await Hive.openBox<TaskModel>('taskBox');
+
+  final repository = TaskRepositoryImpl(taskBox);
+
+  runApp(
+    MyApp(repository: repository),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final TaskRepositoryImpl repository;
+
+  const MyApp({Key? key, required this.repository}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+      title: 'Gerenciador de Tarefas',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: BlocProvider(
+        create: (_) => TaskCubit(repository),
+        child: const TaskListPage(),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), 
     );
   }
 }
