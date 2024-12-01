@@ -5,6 +5,7 @@ import 'package:gerenciamento_tarefas/features/task/data/repositories/task_repos
 import 'package:gerenciamento_tarefas/features/task/presentation/cubit/task_cubit.dart';
 import 'package:gerenciamento_tarefas/features/task/presentation/pages/task_list_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,24 +18,27 @@ void main() async {
   final repository = TaskRepositoryImpl(taskBox);
 
   runApp(
-    MyApp(repository: repository),
+    MultiProvider(
+      providers: [
+        BlocProvider<TaskCubit>(
+          create: (_) => TaskCubit(repository),
+        ),
+        // other providers
+      ],
+      child: MyApp(),
+    ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final TaskRepositoryImpl repository;
-
-  const MyApp({Key? key, required this.repository}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Gerenciador de Tarefas',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: BlocProvider(
-        create: (_) => TaskCubit(repository),
-        child: const TaskListPage(),
-      ),
+      home:  TaskListPage(),
     );
   }
 }

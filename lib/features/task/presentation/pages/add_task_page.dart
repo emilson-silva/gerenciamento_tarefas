@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gerenciamento_tarefas/features/task/domain/entities/task.dart';
+import 'package:gerenciamento_tarefas/features/task/presentation/cubit/task_cubit.dart';
 
-import '../../domain/entities/task.dart';
-import '../cubit/task_cubit.dart';
-
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({Key? key}) : super(key: key);
-
-  @override
-  _AddTaskPageState createState() => _AddTaskPageState();
-}
-
-class _AddTaskPageState extends State<AddTaskPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
+class AddTaskPage extends StatelessWidget {
+  const AddTaskPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final formKey = GlobalKey<FormState>();
+    final titleController = TextEditingController();
+    final descriptionController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Adicionar Tarefa'),
@@ -25,34 +20,42 @@ class _AddTaskPageState extends State<AddTaskPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
+          key: formKey,
           child: Column(
             children: [
               TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Título'),
+                controller: titleController,
+                decoration: InputDecoration(
+                  labelText: 'Título',
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'O título é obrigatório';
+                    return 'Por favor, insira um título';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 16.0),
               TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Descrição'),
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Descrição',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
+                  if (formKey.currentState?.validate() ?? false) {
                     final task = Task(
-                      title: _titleController.text,
-                      description: _descriptionController.text,
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      isCompleted: false,
                     );
                     context.read<TaskCubit>().addTask(task);
-                    Navigator.pop(context);
+                    Navigator.of(context).pop();
                   }
                 },
                 child: const Text('Adicionar'),
@@ -62,12 +65,5 @@ class _AddTaskPageState extends State<AddTaskPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
   }
 }

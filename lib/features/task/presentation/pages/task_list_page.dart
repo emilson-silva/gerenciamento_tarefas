@@ -18,28 +18,45 @@ class TaskListPage extends StatelessWidget {
         builder: (context, tasks) {
           return tasks.isEmpty
               ? const Center(
-                  child: Text('Nenhuma tarefa encontarda'),
+                  child: Text('Nenhuma tarefa encontrada'),
                 )
               : ListView.builder(
                   itemCount: tasks.length,
                   itemBuilder: (context, index) {
                     final task = tasks[index];
                     return ListTile(
-                      title: Text(task.title),
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(task.title),
+                          Text(task.isCompleted ? 'Concluída' : 'Pendente'),
+                        ],
+                      ),
                       subtitle: task.description != null
                           ? Text(task.description ?? 'Sem descrição disponível')
                           : null,
-                      trailing: Checkbox(
-                        value: task.isCompleted,
-                        onChanged: (value) {
-                          context.read<TaskCubit>().updateTask(
-                                Task(
-                                  title: task.title,
-                                  description: task.description,
-                                  isCompleted: value ?? false,
-                                ),
-                              );
-                        },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            value: task.isCompleted,
+                            onChanged: (value) {
+                              context.read<TaskCubit>().updateTask(
+                                    Task(
+                                      title: task.title,
+                                      description: task.description,
+                                      isCompleted: value ?? false,
+                                    ),
+                                  );
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              context.read<TaskCubit>().deleteTask(task);
+                            },
+                          ),
+                        ],
                       ),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
@@ -59,6 +76,6 @@ class TaskListPage extends StatelessWidget {
         ),
         child: const Icon(Icons.add),
       ),
-      );
+    );
   }
 }
