@@ -1,16 +1,44 @@
-# gerenciamento_tarefas
+# Gerenciamento de Tarefas
 
-A new Flutter project.
+Este é um aplicativo de gerenciamento de tarefas desenvolvido com Flutter e utilizando o padrão de arquitetura limpa.
 
-## Getting Started
+## Arquitetura do Projeto
 
-This project is a starting point for a Flutter application.
+O projeto está organizado da seguinte forma:
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Descrição das Pastas
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **core**: Contém utilitários e widgets que podem ser reutilizados em diferentes partes do aplicativo.
+  - **utils**: Funções utilitárias e constantes.
+  - **widgets**: Widgets reutilizáveis.
+
+- **features**: Contém as diferentes funcionalidades do aplicativo.
+  - **task**: Funcionalidade de gerenciamento de tarefas.
+    - **data**: Implementações de fontes de dados, modelos e repositórios.
+      - **datasources**: Fontes de dados (API, banco de dados local, etc.).
+      - **models**: Modelos de dados.
+      - **repositories**: Implementações dos repositórios.
+    - **domain**: Entidades, repositórios e casos de uso.
+      - **entities**: Entidades de domínio.
+      - **repositories**: Interfaces dos repositórios.
+      - **usecases**: Casos de uso.
+    - **presentation**: Camada de apresentação.
+      - **cubit**: Gerenciamento de estado usando Cubit.
+      - **pages**: Páginas da interface do usuário.
+
+## Instalação
+
+Siga os passos abaixo para configurar e executar o projeto localmente.
+
+### Pré-requisitos
+
+- [Flutter](https://flutter.dev/docs/get-started/install) instalado na sua máquina.
+- [Dart](https://dart.dev/get-dart) instalado.
+
+### Passos
+
+1. Clone o repositório:
+
+```sh
+git clone https://github.com/seu-usuario/seu-repositorio.git
