@@ -37,8 +37,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Gerenciador de Tarefas',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home:  TaskListPage(),
+      theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,),
+      home: const TaskListPage(),
     );
   }
 }
