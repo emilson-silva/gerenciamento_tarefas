@@ -20,51 +20,90 @@ class TaskListPage extends StatelessWidget {
               ? const Center(
                   child: Text('Nenhuma tarefa encontrada'),
                 )
-              : ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) {
-                    final task = tasks[index];
-                    return ListTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(task.title),
-                          Text(task.isCompleted ? 'Concluída' : 'Pendente'),
-                        ],
-                      ),
-                      subtitle: task.description != null
-                          ? Text(task.description ?? 'Sem descrição disponível')
-                          : null,
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Checkbox(
-                            value: task.isCompleted,
-                            onChanged: (value) {
-                              context.read<TaskCubit>().updateTask(
-                                    Task(
-                                      title: task.title,
-                                      description: task.description,
-                                      isCompleted: value ?? false,
-                                    ),
-                                  );
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              context.read<TaskCubit>().deleteTask(task);
-                            },
-                          ),
-                        ],
-                      ),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => EditTaskPage(task: task),
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8.0,
+                      mainAxisSpacing: 8.0,
+                    ),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      final task = tasks[index];
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
-                      ),
-                    );
-                  },
+                        elevation: 4.0,
+                        child: InkWell(
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EditTaskPage(task: task),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  task.title,
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+                                if (task.description != null)
+                                  Text(
+                                    task.description ?? 'Sem descrição disponível',
+                                    style: const TextStyle(fontSize: 14.0),
+                                  ),
+                                const Spacer(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        task.isCompleted ? 'Concluída' : 'Pendente',
+                                        style: TextStyle(
+                                          color: task.isCompleted ? Colors.green : Colors.red,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Checkbox(
+                                          value: task.isCompleted,
+                                          onChanged: (value) {
+                                            context.read<TaskCubit>().updateTask(
+                                                  Task(
+                                                    title: task.title,
+                                                    description: task.description,
+                                                    isCompleted: value ?? false,
+                                                  ),
+                                                );
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete),
+                                          onPressed: () {
+                                            context.read<TaskCubit>().deleteTask(task);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 );
         },
       ),
